@@ -5,29 +5,35 @@
 extern "C"
 #endif
 
-struct ARControl;
+struct ARWidget;
 struct ARLayout;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct ARFuncs
 {
-	struct ARControl* (*createButton)(struct ARFuncs* funcs, ARControl* parent, void* userData);
+	// Widgets
+
+	struct ARWidget* (*window_create)(struct ARFuncs* funcs);
+	struct ARWidget* (*button_create)(struct ARFuncs* funcs);
+	struct ARWidget* (*list_view_create)(struct ARFuncs* funcs);
 
 	// Layout
 
-	int (*createVbox)();
+	struct ARLayout* (*layout_vbox_create)();
+	struct ARLayout* (*layout_hbox_create)();
 
+	int (*layout_add)(struct ARWidget* widget);
+	int (*layout_remove)(struct ARWidget* widget);
 
 	// Sizeing
 
-	int (*setWidth)(struct ARControl* control); 
-	int (*setHeight)(struct ARControl* control); 
-
+	int (*widget_set_width)(struct ARWidget* widget); 
+	int (*widget_set_height)(struct ARWidget* widget); 
 
 } ARFuncs;
 
 
-#define AR_createButton(context, parent, userData) context->createButton(context, parent, userData)
+#define ar_button_create(context, parent) context->button_create(context, parent)
 
 #endif
