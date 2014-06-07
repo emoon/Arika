@@ -18,4 +18,6 @@ int main(int argc, char** argv)
 	}
 
 	//arFuncs->close();
+
+	return 0;
 }
