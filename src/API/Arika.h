@@ -1,8 +1,8 @@
 #ifndef _ARIKA_H_
 #define _ARIKA_H_
 
-#ifndef __cplusplus
-extern "C"
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 struct ARWidget;
@@ -14,9 +14,10 @@ typedef struct ARFuncs
 {
 	// Widgets
 
-	struct ARWidget* (*window_create)(struct ARFuncs* funcs);
-	struct ARWidget* (*button_create)(struct ARFuncs* funcs);
-	struct ARWidget* (*list_view_create)(struct ARFuncs* funcs);
+	struct ARWidget* (*window_create_main)();
+	struct ARWidget* (*window_create)();
+	struct ARWidget* (*button_create)();
+	struct ARWidget* (*list_view_create)();
 
 	// Layout
 
@@ -28,12 +29,24 @@ typedef struct ARFuncs
 
 	// Sizeing
 
-	int (*widget_set_width)(struct ARWidget* widget); 
-	int (*widget_set_height)(struct ARWidget* widget); 
+	int (*widget_set_tile)(struct ARWidget* widget, const char* title); 
+	int (*widget_set_width)(struct ARWidget* widget, int width); 
+	int (*widget_set_height)(struct ARWidget* widget, int height); 
+
+	int (*update)();
 
 } ARFuncs;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+ARFuncs* ar_init(const char* sharedLibrary);
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define ar_button_create(context, parent) context->button_create(context, parent)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
