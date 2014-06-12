@@ -1,4 +1,4 @@
-#include <Arika.h>
+#include <Arika/Arika.h>
 #include <QApplication>
 #include <QMainWindow>
 

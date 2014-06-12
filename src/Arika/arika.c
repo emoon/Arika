@@ -1,4 +1,4 @@
-#include "Arika.h"
+#include <Arika/Arika.h>
 #include <dlfcn.h>
 #include <stdio.h>
 

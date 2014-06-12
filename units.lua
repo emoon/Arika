@@ -22,8 +22,10 @@ StaticLibrary {
 StaticLibrary {
 	Name = "arika",
 
+	Env = { CPPPATH = { "include", } },
+
 	Sources = Glob {
-		Dir = "src/API",
+		Dir = "src/Arika",
 		Extensions = { ".c" },
 	},
 }
@@ -33,9 +35,7 @@ SharedLibrary {
 
 	Env = {
         CPPPATH = { 
-            ".", 
-            "src/API",
-            "src/frontend",
+            "include",
             "$(QT5)/include",
             "$(QT5)/include/QtWidgets",
             "$(QT5)/include/QtGui",
@@ -87,7 +87,7 @@ Program {
 	Name = "minimal",
 
 	Env = { 
-        CPPPATH = { "src/API" },
+        CPPPATH = { "include" },
     },
 
 	Sources = "examples/minimal/minimal.c",
