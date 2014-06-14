@@ -95,6 +95,18 @@ static int window_main_create(lua_State* state)
        		s_arFuncs->widget_set_title(s_main_window, value);
 		}
 
+		if (!strcmp(key, "Width"))
+		{
+			int value = (int)luaL_checknumber(state, -1);
+       		s_arFuncs->widget_set_width(s_main_window, value);
+		}
+
+		if (!strcmp(key, "Height"))
+		{
+			int value = (int)luaL_checknumber(state, -1);
+       		s_arFuncs->widget_set_height(s_main_window, value);
+		}
+
         lua_pop(state, 1);
     }
 

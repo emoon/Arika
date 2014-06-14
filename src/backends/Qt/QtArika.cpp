@@ -37,6 +37,28 @@ static int widgetSetTitle(ARWidget* arWidget, const char* title)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static int widgetSetHeight(ARWidget* arWidget, int v)
+{
+	QSize size = arWidget->widget->size(); 
+	size.setHeight(v);
+	arWidget->widget->resize(size);
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int widgetSetWidth(ARWidget* arWidget, int v)
+{
+	QSize size = arWidget->widget->size(); 
+	size.setWidth(v);
+	arWidget->widget->resize(size);
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static int update()
 {
 	s_application->processEvents();
@@ -50,6 +72,8 @@ static ARFuncs s_arFuncs =
 {
 	.window_create_main = windowCreateMain,
 	.widget_set_title = widgetSetTitle,
+	.widget_set_width = widgetSetWidth,
+	.widget_set_height = widgetSetHeight,
 	.update = update,
 };
 
