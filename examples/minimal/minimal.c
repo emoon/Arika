@@ -4,7 +4,7 @@
 
 int main(int argc, char** argv)
 {
-	ARFuncs* arFuncs = ar_init("t2-output/macosx-clang-debug-default/libarika-qt.dylib");
+	ARFuncs* arFuncs = ar_init(OBJECT_DIR, "arika-qt");
 
 	if (!arFuncs)
 		return 0;
