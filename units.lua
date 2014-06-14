@@ -67,6 +67,7 @@ SharedLibrary {
             "-isystem $(QT5)/lib/QtGui.framework/Versions/5/Headers", 
             "-F$(QT5)/lib",
             "-std=gnu0x",
+			"-Wno-c99-extensions",
             "-Wno-c++98-compat-pedantic",
             "-Wno-padded",
             "-Wno-switch-enum",
@@ -103,9 +104,22 @@ Program {
 	Depends = { "arika" },
 }
 
+Program {
+	Name = "button",
+
+	Env = { 
+        CPPPATH = { "include" },
+    },
+
+	Sources = "examples/button/button.c",
+
+	Depends = { "arika" },
+}
+
 
 if native.getenv("QT5", "") ~= "" then
 	Default "arika-qt"
 end
 
 Default "minimal"
+Default "button"

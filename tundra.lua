@@ -18,7 +18,7 @@ local win32 = {
 		CCOPTS = {
 			"/FS",
 			"/W4", 
-			"/WX", "/I.", "/D_CRT_SECURE_NO_WARNINGS",
+			"/WX", "/I.", "/D_CRT_SECURE_NO_WARNINGS", "\"/DOBJECT_DIR=$(OBJECTDIR:#)\"",
 			{ "/Od"; Config = "*-*-debug" },
 			{ "/O2"; Config = "*-*-release" },
 		},
@@ -34,7 +34,12 @@ local macosx = {
 	Env = {
 		QT5 = native.getenv("QT5", ""),
 		CCOPTS = {
-			"-Wpedantic", "-Werror", "-Wall", "-Wno-deprecated-declarations",
+			"-Wpedantic", "-Werror", "-Wall", "-Wno-deprecated-declarations", "-DOBJECT_DIR=\\\"$(OBJECTDIR)\\\"",
+			{ "-O0", "-g"; Config = "*-*-debug" },
+			{ "-O3"; Config = "*-*-release" },
+		},
+		CXXOPTS = {
+			"-Wno-c99-extensions", "-Wpedantic", "-Werror", "-Wall", "-Wno-deprecated-declarations",
 			{ "-O0", "-g"; Config = "*-*-debug" },
 			{ "-O3"; Config = "*-*-release" },
 		},
