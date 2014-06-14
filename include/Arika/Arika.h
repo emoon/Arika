@@ -29,11 +29,17 @@ typedef struct ARFuncs
 
 	// Sizeing
 
-	int (*widget_set_tile)(struct ARWidget* widget, const char* title); 
+	int (*widget_set_title)(struct ARWidget* widget, const char* title); 
 	int (*widget_set_width)(struct ARWidget* widget, int width); 
 	int (*widget_set_height)(struct ARWidget* widget, int height); 
 
 	int (*update)();
+
+	// private data and functions
+
+	int (*ui_load)(const char* filename);
+
+	void* privateData;
 
 } ARFuncs;
 
