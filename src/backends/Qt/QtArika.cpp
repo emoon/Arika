@@ -88,7 +88,7 @@ static int widgetAttach(ARWidget* parent, ARWidget* widget)
 {
 	widget->widget->setParent(parent->widget);
 	widget->widget->show();
-	widget->widget->resize(100, 100);
+	//widget->widget->resize(widget->widget->size());
 
 	return 1;
 }

@@ -5,5 +5,5 @@ MainWindow {
 	Width = 800, 
 	Height = 400,
 
-	PushButton { Title = "PressMe", Width = 10, Height = 10 },
+	PushButton { Title = "PressMe", Width = 100, Height = 100 },
 }

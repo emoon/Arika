@@ -28,36 +28,6 @@ typedef struct ArInternal
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void PrintTable(lua_State *L, int level)
-{
-	int i = 0;
-    lua_pushnil(L);
-
-    while(lua_next(L, -2) != 0)
-    {
-		lua_tostring(L, -2);
-
-        if(lua_isstring(L, -1))
-        {
-          for (i = 0; i < level; ++i)
-            printf(" ");
-          printf("%s = %s\n", lua_tostring(L, -2), lua_tostring(L, -1));
-        }
-        else if(lua_isnumber(L, -1))
-        {
-          for (i = 0; i < level; ++i)
-            printf(" ");
-          printf("%s = %d\n", lua_tostring(L, -2), (int)lua_tonumber(L, -1));
-        }
-        else if(lua_istable(L, -1))
-          PrintTable(L, level + 1);
-
-        lua_pop(L, 1);
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 static int traverseTable(struct ARWidget* widget, lua_State* state)
 {
 	lua_pushnil(state);
@@ -76,18 +46,26 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
         {
 			const char* key = lua_tostring(state, -2); 
 			LUA_NUMBER value = lua_tonumber(state, -1);
+
+			printf("key = %s value = %d\n", key, (int)value);
 		
 			if (!strcmp(key, "Width"))
+			{
        			s_arFuncs->widget_set_width(widget, (int)value);
+       			printf("set width %d\n", (int)value);
+  			}
 			else if (!strcmp(key, "Height"))
+			{
        			s_arFuncs->widget_set_height(widget, (int)value);
+       			printf("set height %d\n", (int)value);
+  			}
 			else if (!strcmp(key, "widget"))
 			{
 				struct ARWidget* cw = (struct ARWidget*)value;
 				s_arFuncs->widget_attach(widget, cw);
 			}
         }
-		else if (lua_istable(state, -1))
+		if (lua_istable(state, -1))
         {
         	printf("traversing table..\n");
 			traverseTable(widget, state);
