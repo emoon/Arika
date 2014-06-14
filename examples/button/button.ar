@@ -1,0 +1,9 @@
+-- Lets test this!
+
+MainWindow { 
+	Title = "Button Window", 
+	Width = 800, 
+	Height = 400,
+
+	PushButton { Title = "PressMe", Width = 10, Height = 10 },
+}

@@ -7,6 +7,7 @@
 ARFuncs* ar_init(const char* path, const char* sharedLib)
 {
 	char fullPath[4096];
+	void* (*initFunc)();
 
 #ifdef __APPLE__
 	sprintf(fullPath, "%s/lib%s.dylib", path, sharedLib);
@@ -16,7 +17,6 @@ ARFuncs* ar_init(const char* path, const char* sharedLib)
 	sprintf(fullPath, "%s/%.so", path, sharedLib);
 #endif
 
-	void* (*initFunc)();
 	void* handle = dlopen(fullPath, RTLD_LOCAL | RTLD_LAZY);
 
 	if (!handle)

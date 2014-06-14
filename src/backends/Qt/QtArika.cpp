@@ -2,6 +2,7 @@
 #include <Arika_internal/Arika_internal.h>
 #include <QApplication>
 #include <QMainWindow>
+#include <QPushButton>
 
 static QApplication* s_application;
 
@@ -14,14 +15,38 @@ struct ARWidget
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static ARWidget* windowCreateMain()
+template<class T> ARWidget* createWidget()
 {
-	QMainWindow* mainWindow = new QMainWindow;
+	T* widget = new T;
 
 	ARWidget* arWidget = new ARWidget;
-	arWidget->widget = mainWindow; 
+	arWidget->widget = widget; 
 
-	mainWindow->show();
+	return arWidget; 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static ARWidget* windowCreateMain()
+{
+	ARWidget* arWidget = createWidget<QMainWindow>(); 
+	arWidget->widget->show();
+
+	return arWidget;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static ARWidget* pushButtonCreate()
+{
+	ARWidget* arWidget = createWidget<QPushButton>(); 
+	QPushButton* button = (QPushButton*)arWidget->widget;
+	button->setText("Test");
+
+	//button->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
+	//button->resize(100, 100);
+
+	printf("creating pushbutton\n");
 
 	return arWidget;
 }
@@ -59,6 +84,17 @@ static int widgetSetWidth(ARWidget* arWidget, int v)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static int widgetAttach(ARWidget* parent, ARWidget* widget)
+{
+	widget->widget->setParent(parent->widget);
+	widget->widget->show();
+	widget->widget->resize(100, 100);
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static int update()
 {
 	s_application->processEvents();
@@ -71,9 +107,11 @@ static int update()
 static ARFuncs s_arFuncs = 
 {
 	.window_create_main = windowCreateMain,
+	.button_create = pushButtonCreate,
 	.widget_set_title = widgetSetTitle,
 	.widget_set_width = widgetSetWidth,
 	.widget_set_height = widgetSetHeight,
+	.widget_attach = widgetAttach,
 	.update = update,
 };
 

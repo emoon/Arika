@@ -33,6 +33,8 @@ typedef struct ARFuncs
 	int (*widget_set_width)(struct ARWidget* widget, int width); 
 	int (*widget_set_height)(struct ARWidget* widget, int height); 
 
+	int (*widget_attach)(struct ARWidget* parent, struct ARWidget* widget); 
+
 	int (*update)();
 
 	// private data and functions

@@ -26,93 +26,104 @@ typedef struct ArInternal
 
 } ARInternal;
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void stackDump(lua_State *L)  
-{  
-    int i;  
-    int top = lua_gettop(L);  
-    printf("the size of stack is:%d\n",top);  
-    for ( i = 1;i <= top;i++ )  
-    {  
-        int type = lua_type(L, i);  
-        switch(type)  
-        {  
-        case LUA_TSTRING:  
-            {  
-                printf("%s",lua_tostring(L, i));  
-                break;  
-            }  
-  
-        case LUA_TBOOLEAN:  
-            {  
-                printf(lua_toboolean(L, i)?"true":"false");  
-                break;  
-            }  
-        case LUA_TNUMBER:  
-            {  
-                printf("%g",lua_tonumber(L, i));  
-                break;  
-            }  
-        case LUA_TTABLE:  
-            {  
-                printf("this is a table!");  
-                break;  
-            }  
-        default:  
-            {  
-                printf("%s",lua_typename(L ,i));  
-                break;  
-            }  
-        }  
-        printf(" ");  
-    }  
-    printf("\n");  
-}  
+void PrintTable(lua_State *L, int level)
+{
+	int i = 0;
+    lua_pushnil(L);
+
+    while(lua_next(L, -2) != 0)
+    {
+		lua_tostring(L, -2);
+
+        if(lua_isstring(L, -1))
+        {
+          for (i = 0; i < level; ++i)
+            printf(" ");
+          printf("%s = %s\n", lua_tostring(L, -2), lua_tostring(L, -1));
+        }
+        else if(lua_isnumber(L, -1))
+        {
+          for (i = 0; i < level; ++i)
+            printf(" ");
+          printf("%s = %d\n", lua_tostring(L, -2), (int)lua_tonumber(L, -1));
+        }
+        else if(lua_istable(L, -1))
+          PrintTable(L, level + 1);
+
+        lua_pop(L, 1);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int traverseTable(struct ARWidget* widget, lua_State* state)
+{
+	lua_pushnil(state);
+
+    while (lua_next(state, -2) != 0)
+    {
+        if (lua_isstring(state, -1))
+        {
+			const char* key = lua_tostring(state, -2);
+			const char* value = lua_tostring(state, -1);
+
+			if (!strcmp(key, "Title"))
+				s_arFuncs->widget_set_title(widget, value);
+        }
+        if (lua_isnumber(state, -1))
+        {
+			const char* key = lua_tostring(state, -2); 
+			LUA_NUMBER value = lua_tonumber(state, -1);
+		
+			if (!strcmp(key, "Width"))
+       			s_arFuncs->widget_set_width(widget, (int)value);
+			else if (!strcmp(key, "Height"))
+       			s_arFuncs->widget_set_height(widget, (int)value);
+			else if (!strcmp(key, "widget"))
+			{
+				struct ARWidget* cw = (struct ARWidget*)value;
+				s_arFuncs->widget_attach(widget, cw);
+			}
+        }
+		else if (lua_istable(state, -1))
+        {
+        	printf("traversing table..\n");
+			traverseTable(widget, state);
+        }
+
+        lua_pop(state, 1);
+    }
+
+    return 1;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static int window_main_create(lua_State* state)
 {
-	//int argc;
-	//const char* title = 0;
-
 	s_main_window = s_arFuncs->window_create_main();
-	printf("creating main widow from lua!\n");
+	traverseTable(s_main_window, state); 
 
-	// make sure wa have a table as input
+	return 0; 
+}
 
-	//luaL_checktable(state, 1);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	lua_pushnil(state);
+static int pushbutton_create(lua_State* state)
+{
+	struct ARWidget* widget = s_arFuncs->button_create();
+	traverseTable(widget, state); 
 
-    while(lua_next(state, -2) != 0)
-    {
-		const char* key = lua_tostring(state, -2);
+	lua_newtable(state);
 
-		if (!strcmp(key, "Title"))
-		{
-			const char* value = luaL_checkstring(state, -1);
-       		s_arFuncs->widget_set_title(s_main_window, value);
-		}
+	lua_pushstring(state, "widget");
+	lua_pushnumber(state, (LUA_NUMBER)widget); 
+	lua_settable(state, -3);
 
-		if (!strcmp(key, "Width"))
-		{
-			int value = (int)luaL_checknumber(state, -1);
-       		s_arFuncs->widget_set_width(s_main_window, value);
-		}
-
-		if (!strcmp(key, "Height"))
-		{
-			int value = (int)luaL_checknumber(state, -1);
-       		s_arFuncs->widget_set_height(s_main_window, value);
-		}
-
-        lua_pop(state, 1);
-    }
-
-	//printf("count %d\n", argc);
-
-	return 1;
+	return 1; 
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +131,7 @@ static int window_main_create(lua_State* state)
 LuaFuncs s_funcs[] =
 {
 	{ window_main_create, "MainWindow" },
+	{ pushbutton_create, "PushButton" },
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +142,7 @@ static int ui_load(const char* filename)
 
 	if (luaL_loadfile(state, filename) || lua_pcall(state, 0, 0, 0) != 0)
 	{
-		printf("Failed to load %s\n", filename);
+		printf("Failed to load %s - %s\n", filename, lua_tostring(state, -1));
 		return 0;
 	}
 
