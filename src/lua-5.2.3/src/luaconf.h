@@ -383,14 +383,19 @@
 ** ===================================================================
 */
 
+/* #define LUA_NUMBER_DOUBLE */
+#ifdef _MSC_VER
+#define LUA_NUMBER	__int64
+#else
+#define LUA_NUMBER	long long
+#endif
 #define LUA_NUMBER_DOUBLE
-#define LUA_NUMBER	double
 
 /*
 @@ LUAI_UACNUMBER is the result of an 'usual argument conversion'
 @* over a number.
 */
-#define LUAI_UACNUMBER	double
+#define LUAI_UACNUMBER LUA_NUMBER
 
 
 /*
@@ -399,11 +404,20 @@
 @@ lua_number2str converts a number to a string.
 @@ LUAI_MAXNUMBER2STR is maximum size of previous conversion.
 */
-#define LUA_NUMBER_SCAN		"%lf"
-#define LUA_NUMBER_FMT		"%.14g"
+#ifdef _MSC_VER
+#define LUA_NUMBER_SCAN		"%I64d"
+#define LUA_NUMBER_FMT		"%I64d"
+#else
+#define LUA_NUMBER_SCAN		"%lld"
+#define LUA_NUMBER_FMT		"%lld"
+#endif
 #define lua_number2str(s,n)	sprintf((s), LUA_NUMBER_FMT, (n))
-#define LUAI_MAXNUMBER2STR	32 /* 16 digits, sign, point, and \0 */
-
+#define LUAI_MAXNUMBER2STR	32 /* 22 */
+#ifdef _MSC_VER
+#define lua_str2number(s,p)	_strtoi64((s), (p), 10)
+#else
+#define lua_str2number(s,p)	strtoll((s), (p), 10)
+#endif
 
 /*
 @@ l_mathop allows the addition of an 'l' or 'f' to all math operations
@@ -419,7 +433,6 @@
 ** systems, you can leave 'lua_strx2number' undefined and Lua will
 ** provide its own implementation.
 */
-#define lua_str2number(s,p)	strtod((s), (p))
 
 #if defined(LUA_USE_STRTODHEX)
 #define lua_strx2number(s,p)	strtod((s), (p))

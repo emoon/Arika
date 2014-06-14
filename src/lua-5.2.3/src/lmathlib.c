@@ -95,13 +95,15 @@ static int math_fmod (lua_State *L) {
   return 1;
 }
 
+/*
 static int math_modf (lua_State *L) {
   lua_Number ip;
-  lua_Number fp = l_mathop(modf)(luaL_checknumber(L, 1), &ip);
+  lua_Number fp = 0; //l_mathop(modf)((double)luaL_checknumber(L, 1), &ip);
   lua_pushnumber(L, ip);
   lua_pushnumber(L, fp);
   return 2;
 }
+*/
 
 static int math_sqrt (lua_State *L) {
   lua_pushnumber(L, l_mathop(sqrt)(luaL_checknumber(L, 1)));
@@ -141,10 +143,12 @@ static int math_exp (lua_State *L) {
   return 1;
 }
 
+/*
 static int math_deg (lua_State *L) {
   lua_pushnumber(L, luaL_checknumber(L, 1)/RADIANS_PER_DEGREE);
   return 1;
 }
+*/
 
 static int math_rad (lua_State *L) {
   lua_pushnumber(L, luaL_checknumber(L, 1)*RADIANS_PER_DEGREE);
@@ -239,7 +243,7 @@ static const luaL_Reg mathlib[] = {
   {"ceil",  math_ceil},
   {"cosh",   math_cosh},
   {"cos",   math_cos},
-  {"deg",   math_deg},
+  //{"deg",   math_deg},
   {"exp",   math_exp},
   {"floor", math_floor},
   {"fmod",   math_fmod},
@@ -251,7 +255,7 @@ static const luaL_Reg mathlib[] = {
   {"log",   math_log},
   {"max",   math_max},
   {"min",   math_min},
-  {"modf",   math_modf},
+  //{"modf",   math_modf},
   {"pow",   math_pow},
   {"rad",   math_rad},
   {"random",     math_random},
