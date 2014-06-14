@@ -1,8 +1,8 @@
 #include <Arika/Arika.h>
+#include <Arika_internal/Arika_internal.h>
 #include <QApplication>
 #include <QMainWindow>
 
-static ARFuncs s_arFuncs;
 static QApplication* s_application;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,12 +18,21 @@ static ARWidget* windowCreateMain()
 {
 	QMainWindow* mainWindow = new QMainWindow;
 
-	ARWidget* arWidget = new ARWidget; 
+	ARWidget* arWidget = new ARWidget;
 	arWidget->widget = mainWindow; 
 
 	mainWindow->show();
 
 	return arWidget;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int widgetSetTitle(ARWidget* arWidget, const char* title)
+{
+	arWidget->widget->setWindowTitle(title);
+
+	return 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,15 +46,21 @@ static int update()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static ARFuncs s_arFuncs = 
+{
+	.window_create_main = windowCreateMain,
+	.widget_set_title = widgetSetTitle,
+	.update = update,
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 static void init()
 {
 	int argc = 0;
 	s_application = new QApplication(argc, (char**)0);
 
-	memset(&s_arFuncs, 0, sizeof(s_arFuncs));
-
-	s_arFuncs.window_create_main = windowCreateMain; 
-	s_arFuncs.update = update; 
+	ar_internal_init(&s_arFuncs);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,13 @@ StaticLibrary {
 
 StaticLibrary {
 	Name = "arika_internal",
+	
+	Env = { 
+		CPPPATH = { 
+			"include", 
+			"src/lua-5.2.3/src", 
+		} 
+	},
 
 	Sources = Glob {
 		Dir = "src/arika_internal",
@@ -36,6 +43,7 @@ SharedLibrary {
 	Env = {
         CPPPATH = { 
             "include",
+            "src",
             "$(QT5)/include",
             "$(QT5)/include/QtWidgets",
             "$(QT5)/include/QtGui",
