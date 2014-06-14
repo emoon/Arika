@@ -4,10 +4,20 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-ARFuncs* ar_init(const char* sharedLib)
+ARFuncs* ar_init(const char* path, const char* sharedLib)
 {
+	char fullPath[4096];
+
+#ifdef __APPLE__
+	sprintf(fullPath, "%s/lib%s.dylib", path, sharedLib);
+#elif _WIN32
+	sprintf(fullPath, "%s/%.dll", path, sharedLib);
+#else
+	sprintf(fullPath, "%s/%.so", path, sharedLib);
+#endif
+
 	void* (*initFunc)();
-	void* handle = dlopen(sharedLib, RTLD_LOCAL | RTLD_LAZY);
+	void* handle = dlopen(fullPath, RTLD_LOCAL | RTLD_LAZY);
 
 	if (!handle)
 	{
