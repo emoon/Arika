@@ -84,11 +84,11 @@ static int widgetSetWidth(ARWidget* arWidget, int v)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static int widgetAttach(ARWidget* parent, ARWidget* widget)
+static int widgetAttach(ARWidget* arParent, ARWidget* arWidget)
 {
-	widget->widget->setParent(parent->widget);
-	widget->widget->show();
-	//widget->widget->resize(widget->widget->size());
+	arWidget->widget->setParent(arParent->widget);
+	arWidget->widget->show();
+	arParent->widget->update();
 
 	return 1;
 }
