@@ -42,22 +42,19 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 			if (!strcmp(key, "Title"))
 				s_arFuncs->widget_set_title(widget, value);
         }
+
         if (lua_isnumber(state, -1))
         {
 			const char* key = lua_tostring(state, -2); 
 			LUA_NUMBER value = lua_tonumber(state, -1);
 
-			printf("key = %s value = %d\n", key, (int)value);
-		
 			if (!strcmp(key, "Width"))
 			{
        			s_arFuncs->widget_set_width(widget, (int)value);
-       			printf("set width %d\n", (int)value);
   			}
 			else if (!strcmp(key, "Height"))
 			{
        			s_arFuncs->widget_set_height(widget, (int)value);
-       			printf("set height %d\n", (int)value);
   			}
 			else if (!strcmp(key, "widget"))
 			{
@@ -65,9 +62,9 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 				s_arFuncs->widget_attach(widget, cw);
 			}
         }
+
 		if (lua_istable(state, -1))
         {
-        	printf("traversing table..\n");
 			traverseTable(widget, state);
         }
 
