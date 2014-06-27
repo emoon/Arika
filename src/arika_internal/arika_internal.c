@@ -61,6 +61,11 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 				struct ARWidget* cw = (struct ARWidget*)value;
 				s_arFuncs->widget_attach(widget, cw);
 			}
+			else if (!strcmp(key, "layout"))
+			{
+				struct ARLayout* layout = (struct ARLayout*)value;
+				s_arFuncs->widget_set_layout(widget, layout);
+			}
         }
 
 		if (lua_istable(state, -1))
@@ -74,6 +79,36 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
     return 1;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int traverseTableLayout(struct ARLayout* layout, lua_State* state)
+{
+	lua_pushnil(state);
+
+    while (lua_next(state, -2) != 0)
+    {
+        if (lua_isnumber(state, -1))
+        {
+			const char* key = lua_tostring(state, -2); 
+			LUA_NUMBER value = lua_tonumber(state, -1);
+
+			if (!strcmp(key, "widget"))
+			{
+				struct ARWidget* cw = (struct ARWidget*)value;
+				s_arFuncs->layout_add(layout, cw);
+			}
+        }
+
+		if (lua_istable(state, -1))
+        {
+			traverseTableLayout(layout, state);
+        }
+
+        lua_pop(state, 1);
+    }
+
+    return 1;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -103,10 +138,31 @@ static int pushbutton_create(lua_State* state)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static int layout_vbox_create(lua_State* state)
+{
+	struct ARLayout* layout = s_arFuncs->layout_vbox_create();
+	traverseTableLayout(layout, state); 
+
+	lua_newtable(state);
+
+	lua_pushstring(state, "layout");
+	lua_pushnumber(state, (LUA_NUMBER)layout); 
+	lua_settable(state, -3);
+
+	return 1; 
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 LuaFuncs s_funcs[] =
 {
 	{ window_main_create, "MainWindow" },
 	{ pushbutton_create, "PushButton" },
+	{ layout_vbox_create, "VBoxLayout" },
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 static QApplication* s_application;
 
@@ -10,7 +11,21 @@ static QApplication* s_application;
 
 struct ARWidget
 {
+	ARWidget()
+	{
+		mainWindow = 0;
+		widget = 0;
+	}
+
+	QWidget* mainWindow;
 	QWidget* widget;
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct ARLayout
+{
+	QLayout* layout;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +45,12 @@ template<class T> ARWidget* createWidget()
 static ARWidget* windowCreateMain()
 {
 	ARWidget* arWidget = createWidget<QMainWindow>(); 
-	arWidget->widget->show();
+
+    QWidget* t = new QWidget(arWidget->widget);
+    arWidget->mainWindow = arWidget->widget;
+    arWidget->widget = t;
+
+	arWidget->mainWindow->show();
 
 	return arWidget;
 }
@@ -42,9 +62,6 @@ static ARWidget* pushButtonCreate()
 	ARWidget* arWidget = createWidget<QPushButton>(); 
 	QPushButton* button = (QPushButton*)arWidget->widget;
 	button->setText("Test");
-
-	//button->setGeometry(QRect(QPoint(100, 100), QSize(200, 50)));
-	//button->resize(100, 100);
 
 	printf("creating pushbutton\n");
 
@@ -64,9 +81,14 @@ static int widgetSetTitle(ARWidget* arWidget, const char* title)
 
 static int widgetSetHeight(ARWidget* arWidget, int v)
 {
-	QSize size = arWidget->widget->size(); 
+	QWidget* w = arWidget->widget;
+
+	if (arWidget->mainWindow)
+		w = arWidget->mainWindow;
+
+	QSize size = w->size(); 
 	size.setHeight(v);
-	arWidget->widget->resize(size);
+	w->resize(size);
 
 	return 1;
 }
@@ -75,9 +97,14 @@ static int widgetSetHeight(ARWidget* arWidget, int v)
 
 static int widgetSetWidth(ARWidget* arWidget, int v)
 {
-	QSize size = arWidget->widget->size(); 
+	QWidget* w = arWidget->widget;
+
+	if (arWidget->mainWindow)
+		w = arWidget->mainWindow;
+
+	QSize size = w->size(); 
 	size.setWidth(v);
-	arWidget->widget->resize(size);
+	w->resize(size);
 
 	return 1;
 }
@@ -89,6 +116,42 @@ static int widgetAttach(ARWidget* arParent, ARWidget* arWidget)
 	arWidget->widget->setParent(arParent->widget);
 	arWidget->widget->show();
 	arParent->widget->update();
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static struct ARLayout* vboxCreate()
+{
+	ARLayout* arLayout = new ARLayout;
+	QVBoxLayout* layout = new QVBoxLayout;
+
+	arLayout->layout = layout;
+
+	printf("vboxCreate\n");
+
+	return arLayout;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int layoutAdd(struct ARLayout* arLayout, struct ARWidget* arWidget)
+{
+	arLayout->layout->addWidget(arWidget->widget);
+
+	printf("layout Add\n");
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int widgetSetLayout(struct ARWidget* arWidget, struct ARLayout* arLayout)
+{
+	arWidget->widget->setLayout(arLayout->layout);
+
+	printf("set layout\n");
 
 	return 1;
 }
@@ -108,9 +171,12 @@ static ARFuncs s_arFuncs =
 {
 	.window_create_main = windowCreateMain,
 	.button_create = pushButtonCreate,
+	.layout_vbox_create = vboxCreate,
+	.layout_add = layoutAdd,
 	.widget_set_title = widgetSetTitle,
 	.widget_set_width = widgetSetWidth,
 	.widget_set_height = widgetSetHeight,
+	.widget_set_layout = widgetSetLayout,
 	.widget_attach = widgetAttach,
 	.update = update,
 };

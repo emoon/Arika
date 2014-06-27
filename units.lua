@@ -67,6 +67,7 @@ SharedLibrary {
             "-isystem $(QT5)/lib/QtGui.framework/Versions/5/Headers", 
             "-F$(QT5)/lib",
             "-std=gnu0x",
+            "-Wno-nested-anon-types",
 			"-Wno-c99-extensions",
             "-Wno-c++98-compat-pedantic",
             "-Wno-padded",
@@ -95,9 +96,7 @@ SharedLibrary {
 Program {
 	Name = "minimal",
 
-	Env = { 
-        CPPPATH = { "include" },
-    },
+	Env = { CPPPATH = { "include" }, },
 
 	Sources = "examples/minimal/minimal.c",
 
@@ -107,11 +106,19 @@ Program {
 Program {
 	Name = "button",
 
-	Env = { 
-        CPPPATH = { "include" },
-    },
+	Env = { CPPPATH = { "include" }, },
 
 	Sources = "examples/button/button.c",
+
+	Depends = { "arika" },
+}
+
+Program {
+	Name = "vbox_layout",
+
+	Env = { CPPPATH = { "include" }, },
+
+	Sources = "examples/vbox_layout/vbox_layout.c",
 
 	Depends = { "arika" },
 }
@@ -123,3 +130,4 @@ end
 
 Default "minimal"
 Default "button"
+Default "vbox_layout"

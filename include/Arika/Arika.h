@@ -24,14 +24,15 @@ typedef struct ARFuncs
 	struct ARLayout* (*layout_vbox_create)();
 	struct ARLayout* (*layout_hbox_create)();
 
-	int (*layout_add)(struct ARWidget* widget);
-	int (*layout_remove)(struct ARWidget* widget);
+	int (*layout_add)(struct ARLayout* layout, struct ARWidget* widget);
+	int (*layout_remove)(struct ARLayout* layout, struct ARWidget* widget);
 
 	// Sizeing
 
 	int (*widget_set_title)(struct ARWidget* widget, const char* title); 
 	int (*widget_set_width)(struct ARWidget* widget, int width); 
 	int (*widget_set_height)(struct ARWidget* widget, int height); 
+	int (*widget_set_layout)(struct ARWidget* widget, struct ARLayout* layout);
 
 	int (*widget_attach)(struct ARWidget* parent, struct ARWidget* widget); 
 

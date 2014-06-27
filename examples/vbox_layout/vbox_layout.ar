@@ -1,0 +1,13 @@
+-- Lets test this!
+
+MainWindow { 
+	Title = "VBoxLayout", 
+	Width = 800, 
+	Height = 400,
+
+	VBoxLayout
+	{
+		PushButton { Title = "PressMe", Width = 100, Height = 100 },
+		PushButton { Title = "PressMe 2", Width = 100, Height = 100 },
+	},
+}
