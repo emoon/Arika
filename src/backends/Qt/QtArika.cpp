@@ -50,7 +50,42 @@ static ARWidget* windowCreateMain()
     arWidget->mainWindow = arWidget->widget;
     arWidget->widget = t;
 
+    t->resize(500, 500);
+/*
+
+    QPushButton* button = new QPushButton("Test");
+    //new QPushButton("Meh", t);
+
+    //button->setParent(t);
+    
+    QVBoxLayout* layout = new QVBoxLayout(t);
+    layout->addWidget(button);
+
+    QPushButton* b0 = new QPushButton("Test");
+    QPushButton* b1 = new QPushButton("Test1");
+    QPushButton* b2 = new QPushButton("Test2");
+    QPushButton* b3 = new QPushButton("Test3");
+
+    layout->addWidget(b0);
+    layout->addWidget(b1);
+    layout->addWidget(b2);
+    layout->addWidget(b3);
+
+	t->setLayout(layout);
+
+	arWidget->mainWindow->resize(1024, 768);
+*/
 	arWidget->mainWindow->show();
+
+	//printf("exec\n");
+
+	//s_application->exec();
+
+	//printf("end\n");
+
+	//exit(0);
+
+	//printf("after exit\n");
 
 	return arWidget;
 }
@@ -60,8 +95,8 @@ static ARWidget* windowCreateMain()
 static ARWidget* pushButtonCreate()
 {
 	ARWidget* arWidget = createWidget<QPushButton>(); 
-	QPushButton* button = (QPushButton*)arWidget->widget;
-	button->setText("Test");
+	//QPushButton* button = (QPushButton*)arWidget->widget;
+	//button->setText("Test");
 
 	printf("creating pushbutton\n");
 
@@ -73,9 +108,17 @@ static ARWidget* pushButtonCreate()
 static int widgetSetTitle(ARWidget* arWidget, const char* title)
 {
 	arWidget->widget->setWindowTitle(title);
-
 	return 1;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static int widgetSetText(ARWidget* arWidget, const char* title)
+{
+	((QAbstractButton*)arWidget->widget)->setText(title);
+	return 1;
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -174,6 +217,7 @@ static ARFuncs s_arFuncs =
 	.layout_vbox_create = vboxCreate,
 	.layout_add = layoutAdd,
 	.widget_set_title = widgetSetTitle,
+	.widget_set_text = widgetSetText,
 	.widget_set_width = widgetSetWidth,
 	.widget_set_height = widgetSetHeight,
 	.widget_set_layout = widgetSetLayout,

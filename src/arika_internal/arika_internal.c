@@ -39,7 +39,9 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 			const char* key = lua_tostring(state, -2);
 			const char* value = lua_tostring(state, -1);
 
-			if (!strcmp(key, "Title"))
+			if (!strcmp(key, "Text"))
+				s_arFuncs->widget_set_text(widget, value);
+			else if (!strcmp(key, "Title"))
 				s_arFuncs->widget_set_title(widget, value);
         }
 

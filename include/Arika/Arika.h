@@ -30,6 +30,7 @@ typedef struct ARFuncs
 	// Sizeing
 
 	int (*widget_set_title)(struct ARWidget* widget, const char* title); 
+	int (*widget_set_text)(struct ARWidget* widget, const char* text); 
 	int (*widget_set_width)(struct ARWidget* widget, int width); 
 	int (*widget_set_height)(struct ARWidget* widget, int height); 
 	int (*widget_set_layout)(struct ARWidget* widget, struct ARLayout* layout);
