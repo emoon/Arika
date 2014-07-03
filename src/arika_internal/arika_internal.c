@@ -7,7 +7,7 @@
 
 #define sizeof_array(array) (int)(sizeof(array) / sizeof(array[0]))
 
-static ARFuncs* s_arFuncs;
+ARFuncs* g_arFuncs = 0;
 static struct ARWidget* s_main_window;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 			const char* value = lua_tostring(state, -1);
 
 			if (!strcmp(key, "Text"))
-				s_arFuncs->widget_set_text(widget, value);
+				g_arFuncs->widget_set_text(widget, value);
 			else if (!strcmp(key, "Title"))
-				s_arFuncs->widget_set_title(widget, value);
+				g_arFuncs->widget_set_title(widget, value);
         }
 
         if (lua_isnumber(state, -1))
@@ -52,21 +52,21 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
 
 			if (!strcmp(key, "Width"))
 			{
-       			s_arFuncs->widget_set_width(widget, (int)value);
+       			g_arFuncs->widget_set_width(widget, (int)value);
   			}
 			else if (!strcmp(key, "Height"))
 			{
-       			s_arFuncs->widget_set_height(widget, (int)value);
+       			g_arFuncs->widget_set_height(widget, (int)value);
   			}
 			else if (!strcmp(key, "widget"))
 			{
 				struct ARWidget* cw = (struct ARWidget*)value;
-				s_arFuncs->widget_attach(widget, cw);
+				g_arFuncs->widget_attach(widget, cw);
 			}
 			else if (!strcmp(key, "layout"))
 			{
 				struct ARLayout* layout = (struct ARLayout*)value;
-				s_arFuncs->widget_set_layout(widget, layout);
+				g_arFuncs->widget_set_layout(widget, layout);
 			}
         }
 
@@ -97,7 +97,7 @@ static int traverseTableLayout(struct ARLayout* layout, lua_State* state)
 			if (!strcmp(key, "widget"))
 			{
 				struct ARWidget* cw = (struct ARWidget*)value;
-				s_arFuncs->layout_add(layout, cw);
+				g_arFuncs->layout_add(layout, cw);
 			}
         }
 
@@ -116,7 +116,7 @@ static int traverseTableLayout(struct ARLayout* layout, lua_State* state)
 
 static int window_main_create(lua_State* state)
 {
-	s_main_window = s_arFuncs->window_create_main();
+	s_main_window = g_arFuncs->window_create_main();
 	traverseTable(s_main_window, state); 
 
 	return 0; 
@@ -126,7 +126,7 @@ static int window_main_create(lua_State* state)
 
 static int pushbutton_create(lua_State* state)
 {
-	struct ARWidget* widget = s_arFuncs->button_create();
+	struct ARWidget* widget = g_arFuncs->button_create();
 	traverseTable(widget, state); 
 
 	lua_newtable(state);
@@ -142,7 +142,7 @@ static int pushbutton_create(lua_State* state)
 
 static int layout_vbox_create(lua_State* state)
 {
-	struct ARLayout* layout = s_arFuncs->layout_vbox_create();
+	struct ARLayout* layout = g_arFuncs->layout_vbox_create();
 	traverseTableLayout(layout, state); 
 
 	lua_newtable(state);
@@ -171,7 +171,7 @@ LuaFuncs s_funcs[] =
 
 static int ui_load(const char* filename)
 {
-	lua_State* state = ((ARInternal*)s_arFuncs->privateData)->luaState;
+	lua_State* state = ((ARInternal*)g_arFuncs->privateData)->luaState;
 
 	if (luaL_loadfile(state, filename) || lua_pcall(state, 0, 0, 0) != 0)
 	{
@@ -191,7 +191,7 @@ int ar_internal_init(ARFuncs* funcs)
 	
 	state = malloc(sizeof(ARInternal));
 
-	s_arFuncs = funcs;
+	g_arFuncs = funcs;
 
 	printf("trying to create State\n");
 
