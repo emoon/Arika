@@ -53,8 +53,6 @@ ARFuncs* ar_init(const char* path, const char* sharedLibrary);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#define ar_button_create(context, parent) context->button_create(context, parent)
-
 #ifdef __cplusplus
 }
 #endif
