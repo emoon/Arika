@@ -37,6 +37,14 @@ StaticLibrary {
 	},
 }
 
+CSharpLib {
+	Name = "Arika.NET",
+	Sources = { 
+		"src/dotnet/Arika.cs",
+		"src/dotnet/ArikaRaw.cs" 
+	},
+}
+
 SharedLibrary {
 	Name = "arika-qt",
 
@@ -123,11 +131,18 @@ Program {
 	Depends = { "arika" },
 }
 
+CSharpExe {
+	Name = "csharp",
+	Sources = { "examples/csharp/csharp.cs" },
+	Depends = { "Arika.NET" },
+}
 
 if native.getenv("QT5", "") ~= "" then
 	Default "arika-qt"
 end
 
+Default "csharp"
 Default "minimal"
 Default "button"
 Default "vbox_layout"
+Default "Arika.NET"
