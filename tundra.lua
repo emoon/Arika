@@ -7,6 +7,7 @@ local common =
 {
 	Env = {
 		QT5 = native.getenv("QT5", ""),
+		BINDGEN = "$(OBJECTDIR)$(SEP)bind_generator$(PROGSUFFIX)",
 	},
 }
 
@@ -65,6 +66,11 @@ Build {
 			},
 		},
 		MsvcSolutions = { ['Arika.sln'] = { } },
+	},
+
+	Passes = {
+		CompileGenerator = { Name="Compile generator", BuildOrder = 1 },
+		CodeGeneration = { Name="Generate sources", BuildOrder = 2 },
 	},
 
 	Configs = {

@@ -1,6 +1,25 @@
 require "tundra.syntax.glob"
 local native = require('tundra.native')
 
+DefRule {
+	Name = "BindGenerator",
+	Pass = "CodeGeneration",
+	Command = "$(BINDGEN) $(<) $(@)",
+	ImplicitInputs = { "$(BINDGEN)" },
+
+	Blueprint = {
+		Source = { Required = true, Type = "string", Help = "Input filename", },
+		OutName = { Required = true, Type = "string", Help = "Output filename", },
+	},
+
+	Setup = function (env, data)
+		return {
+			InputFiles    = { data.Source },
+			OutputFiles   = { "$(OBJECTDIR)/_generated/" .. data.OutName },
+		}
+	end,
+}
+
 StaticLibrary {
 	Name = "lua",
 
@@ -147,10 +166,22 @@ CSharpExe {
 	Depends = { "Arika.NET" },
 }
 
-if native.getenv("QT5", "") ~= "" then
-	Default "arika-qt"
-end
+Program {
+	Name = "bind_generator",
+	Pass = "CompileGenerator",
+	Target = "$(BINDGEN)",
 
+	Sources = Glob {
+		Dir = "src/bind_generator",
+		Extensions = { ".c" },
+	},
+}
+
+-- if native.getenv("QT5", "") ~= "" then
+-- 	Default "arika-qt"
+-- end
+
+Default "bind_generator"
 Default "csharp"
 Default "minimal"
 Default "button"
