@@ -6,6 +6,9 @@ int main(int argc, char** argv)
 {
 	ARFuncs* arFuncs = ar_init(OBJECT_DIR, "arika-qt");
 
+	(void)argc;
+	(void)argv;
+
 	if (!arFuncs)
 		return 0;
 

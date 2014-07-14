@@ -60,7 +60,7 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
   			}
 			else if (!strcmp(key, "widget"))
 			{
-				struct ARWidget* cw = (struct ARWidget*)value;
+				struct ARWidget* cw = (struct ARWidget*)(unsigned __int64)value;
 				g_arFuncs->widget_attach(widget, cw);
 			}
 			else if (!strcmp(key, "layout"))

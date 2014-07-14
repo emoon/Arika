@@ -476,6 +476,7 @@ static int pmain (lua_State *L) {
   return 1;
 }
 
+#if 0
 
 int main (int argc, char **argv) {
   int status, result;
@@ -494,4 +495,6 @@ int main (int argc, char **argv) {
   lua_close(L);
   return (result && status == LUA_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+
+#endif
 

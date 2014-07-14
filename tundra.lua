@@ -69,8 +69,8 @@ Build {
 
 	Configs = {
 
-		Config { Name = "win32-msvc", Inherit = win32, Tools = { "msvc" }, SupportedHosts = { "windows" }, },
-		Config { Name = "win64-msvc", Inherit = win32, Tools = { "msvc" }, SupportedHosts = { "windows" }, },
+		Config { Name = "win32-msvc", Inherit = win32, Tools = { "msvc", "dotnet" }, SupportedHosts = { "windows" }, },
+		Config { Name = "win64-msvc", Inherit = win32, Tools = { "msvc", "dotnet" }, SupportedHosts = { "windows" }, },
 		Config { Name = "macosx-clang", Inherit = macosx, Tools = { "clang-osx", "mono" }, SupportedHosts = { "macosx" },},
 		Config { Name = "unix-gcc", Inherit = common, Tools = { "gcc" }, SupportedHosts = { "linux", "freebsd" },},
 	},

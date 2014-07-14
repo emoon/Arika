@@ -212,17 +212,30 @@ static int update()
 
 static ARFuncs s_arFuncs = 
 {
-	.window_create_main = windowCreateMain,
-	.button_create = pushButtonCreate,
-	.layout_vbox_create = vboxCreate,
-	.layout_add = layoutAdd,
-	.widget_set_title = widgetSetTitle,
-	.widget_set_text = widgetSetText,
-	.widget_set_width = widgetSetWidth,
-	.widget_set_height = widgetSetHeight,
-	.widget_set_layout = widgetSetLayout,
-	.widget_attach = widgetAttach,
-	.update = update,
+	// Widgets
+
+	windowCreateMain,
+	0,
+	pushButtonCreate,
+	0,
+
+	// Layout
+
+	vboxCreate,
+	0,
+
+	layoutAdd,
+	0,
+
+	// Sizeing
+
+	widgetSetTitle,
+	widgetSetText,
+	widgetSetWidth,
+	widgetSetHeight,
+	widgetSetLayout,
+	widgetAttach,
+	update,
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

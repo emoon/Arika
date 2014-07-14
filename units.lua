@@ -4,6 +4,12 @@ local native = require('tundra.native')
 StaticLibrary {
 	Name = "lua",
 
+	Env = {
+		CCOPTS = {
+			{ "/wd4244", "/wd4702"; Config = "win*-*-*" },	-- double -> int64 (as used in LUA for LUA_NUMBER)
+		},
+	},
+
 	Sources = Glob {
 		Dir = "src/lua-5.2.3",
 		Extensions = { ".c" },
@@ -17,7 +23,11 @@ StaticLibrary {
 		CPPPATH = { 
 			"include", 
 			"src/lua-5.2.3/src", 
-		} 
+		}, 
+
+		CCOPTS = {
+			{ "/wd4305"; Config = "win*-*-*" },	-- type cast int64 -> void* 
+		},
 	},
 
 	Sources = Glob {
