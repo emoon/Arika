@@ -32,6 +32,8 @@ local win32 = {
 }
 
 local macosx = {
+	Inherit = common,
+
 	Env = {
 		QT5 = native.getenv("QT5", ""),
 		CCOPTS = {

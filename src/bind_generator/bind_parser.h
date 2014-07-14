@@ -19,3 +19,4 @@ typedef struct BGFunction
 	struct BGFunction* next;
 
 } BGFunction;
+
