@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <string.h>
 
+static bool g_debugPrint = true;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A general notice of this code:
 // This is *not* by any means a generic header parser. It's written to handle the input of Arika.h
@@ -194,6 +196,7 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 	// parse parameters
 
 	function->parameters = parameter = malloc(sizeof(BGParameter) * paramCount);
+	function->parmCount = paramCount;
 
 	token = strtok(newLine, ",");
 	while (token) 
@@ -240,6 +243,22 @@ static BGFunction* parseFunction(const char* line, int length)
 
 	parseParameters(function, line + startParam, length - startParam);
 
+	if (g_debugPrint)
+	{
+		int i;
+
+		printf("========================================================================\n");
+		printf("Function name %s", function->name);
+		printf("Function retType %s", function->returnType);
+
+		for (i = 0; i < function->parmCount; ++i)
+		{
+			printf("Parameter %s - %s\n",
+				function->parameters[i].type,
+				function->parameters[i].variable);
+		}
+	}
+
 	return function;
 }
 
@@ -249,8 +268,16 @@ static BGFunction* parseLine(const char* line)
 {
 	int lineLength = strlen(line);
 
+	if (g_debugPrint)
+		printf("Parsing line: %s", line);
+
 	if (!isFunction(line, lineLength))
+	{
+		if (g_debugPrint)
+			printf("Line: %s is not a function", line);
+
 		return 0;
+	}
 
 	return parseFunction(line, lineLength);
 }
@@ -278,8 +305,13 @@ static BGFunction* parseHeader(const char* filename)
 		{
 			case STATE_STRUCT:
 			{
-				if (!strcmp(line, "typedef struct ARFuncs"))
+				 if (!strcmp(line, "typedef struct ARFuncs"))
+				 {
 					state = STATE_FIND_FUNCTIONS;
+
+					if (g_debugPrint)
+						printf("Switching to looking for functions\n");
+				 }
 
 				break;
 			}
@@ -289,7 +321,12 @@ static BGFunction* parseHeader(const char* filename)
 				BGFunction* func;
 
 				if (!strcmp(line, "} ARFuncs;"))
+				{
+					if (g_debugPrint)
+						printf("End of function hunt\n");
+
 					goto end;
+				}
 
 				func = parseLine(line);
 
