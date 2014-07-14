@@ -14,22 +14,6 @@ static bool g_debugPrint = true;
 // structure of how the header look so if you mess around with that fill too much this code
 // needs to be updated.
 
-enum State
-{
-	STATE_STRUCT,
-	STATE_FIND_FUNCTIONS,
-	STATE_BLOCK_COMMENT,
-};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-enum FunctionState
-{
-	STATE_FIND_RETURN,
-	STATE_FIND_FUNC_NAME,
-	STATE_FIND_PARAMS,
-};
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // The way we qualify that something is a function:
 // 1. has 2 (...) and another set (...) like : (*foo)(int meh)
@@ -279,12 +263,7 @@ static BGFunction* parseLine(const char* line)
 	int lineLength = strlen(line);
 
 	if (!isFunction(line, lineLength))
-	{
-		//if (g_debugPrint)
-		//	printf("Line is not function: %s", line);
-
 		return 0;
-	}
 
 	return parseFunction(line, lineLength);
 }
@@ -294,7 +273,6 @@ static BGFunction* parseLine(const char* line)
 static BGFunction* parseHeader(const char* filename)
 {
 	char line[256];
-	int state = STATE_STRUCT;
 	BGFunction* function = 0;
 	BGFunction* firstFunction = 0;
 
@@ -306,67 +284,25 @@ static BGFunction* parseHeader(const char* filename)
 		return 0;
 	}
 
-
-	if (g_debugPrint)
-		printf("Staring to parse...\n");
-
 	while (fgets(line, sizeof(line), f))
 	{
-		switch (state)
+		BGFunction* func = parseLine(line);
+
+		if (func)
 		{
-			case STATE_STRUCT:
+			if (!firstFunction)
 			{
-				if (strstr(line, "typedef struct ARFuncs"))
-				{
-					state = STATE_FIND_FUNCTIONS;
-
-					if (g_debugPrint)
-						printf("Switching to looking for functions\n");
-				}
-
-				break;
+				function = firstFunction = func;
 			}
-
-			case STATE_FIND_FUNCTIONS:
+			else
 			{
-				BGFunction* func;
-
-				if (strstr(line, "} ARFuncs"))
-				{
-					if (g_debugPrint)
-						printf("End of function hunt\n");
-
-					goto end;
-				}
-
-				func = parseLine(line);
-
-				if (func)
-				{
-					if (!firstFunction)
-					{
-						function = firstFunction = func;
-					}
-					else
-					{
-						function->next = func;
-						function = func;
-					}
-				}
-
-				break;
-			}
-
-			case STATE_BLOCK_COMMENT:
-			{
-				break;
+				function->next = func;
+				function = func;
 			}
 		}
 
 		memset(line, 0, sizeof(line));
 	}
-
-end:;
 
 	fclose(f);
 
