@@ -115,11 +115,11 @@ static char* findReturn(const char* line, int lineLength)
 	{
 		char c = line[i];
 
-		if (c != ' ' || c != '\t')
-		{
-			start = i;
-			break;
-		}
+		if (c == ' ' || c == '\t')
+			continue;
+
+		start = i;
+		break;
 	}
 
 	if (start == -1)
@@ -127,7 +127,7 @@ static char* findReturn(const char* line, int lineLength)
 	
 	// find end
 
-	for (i = 0; i < lineLength; ++i)
+	for ( ; i < lineLength; ++i)
 	{
 		if (line[i] == '(')
 		{
@@ -165,7 +165,9 @@ static char* findFunctionName(const char* line, int length, int* outEnd)
 	functionName = malloc(functionLen);
 	memcpy(functionName, &line[start + 2], functionLen); // + 2 to skip (*
 
-	functionName[functionLen - 1] = 0; // - 1 to stomp )
+	functionName[functionLen - 2] = 0; // - 1 to stomp )
+
+	*outEnd += 1; // start on next entry
 
 	return functionName;
 }
@@ -180,23 +182,18 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 	BGParameter* parameter;
 	int paramCount = 0;
 
-	len = findParantRange(line, length, &start, &end);
-	memcpy(newLine, line + start, len);
+	len = findParantRange(line, length, &start, &end) - 1;
+
+	if (len <= 1)
+		return;
+
+	memcpy(newLine, line + start + 1, len + 3);
+	newLine[len + 0] = ',';
 	newLine[len + 1] = 0;
 
+	function->parameters = parameter = malloc(sizeof(BGParameter) * 128);	// ugly but whatever...
+
 	// Count parameters
-
-	token = strtok(newLine, ",");
-	while (token) 
-	{
-		token = strtok(NULL, ",");
-		paramCount++;
-	}
-
-	// parse parameters
-
-	function->parameters = parameter = malloc(sizeof(BGParameter) * paramCount);
-	function->parmCount = paramCount;
 
 	token = strtok(newLine, ",");
 	while (token) 
@@ -210,9 +207,10 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 		{
 			if (token[i] == ' ')
 			{
-				parameter->variable = malloc(count);
-				memcpy(parameter->variable, &token[i], count + 1);
-				parameter->variable[count + 1] = 0;
+				parameter->variable = malloc(count + 1);
+				memcpy(parameter->variable, &token[i + 1], count);
+				parameter->variable[count] = 0;
+				break;
 			}
 
 			count++;
@@ -220,12 +218,23 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 
 		// get type
 
-		parameter->type = malloc(len - (count + 1));
-		memcpy(parameter->type, token, len - count);
-		parameter->type[len - count] = 0;
+		if (token[0] == ' ')
+			token++;
+
+		parameter->type = malloc(i + 256);
+		memset(parameter->type, 0, i + 256);
+		memcpy(parameter->type, token, i + 1);
+		parameter->type[i + 0] = 0;
 
 		token = strtok(NULL, ",");
+
+		paramCount++;
+		parameter++;
+
+		assert(paramCount < 128);
 	}
+
+	function->parameterCount = paramCount;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -248,10 +257,11 @@ static BGFunction* parseFunction(const char* line, int length)
 		int i;
 
 		printf("========================================================================\n");
-		printf("Function name %s", function->name);
-		printf("Function retType %s", function->returnType);
 
-		for (i = 0; i < function->parmCount; ++i)
+		printf("Function name %s\n", function->name);
+		printf("Function retType %s\n", function->returnType);
+
+		for (i = 0; i < function->parameterCount; ++i)
 		{
 			printf("Parameter %s - %s\n",
 				function->parameters[i].type,
@@ -268,13 +278,10 @@ static BGFunction* parseLine(const char* line)
 {
 	int lineLength = strlen(line);
 
-	if (g_debugPrint)
-		printf("Parsing line: %s", line);
-
 	if (!isFunction(line, lineLength))
 	{
-		if (g_debugPrint)
-			printf("Line: %s is not a function", line);
+		//if (g_debugPrint)
+		//	printf("Line is not function: %s", line);
 
 		return 0;
 	}
@@ -299,19 +306,23 @@ static BGFunction* parseHeader(const char* filename)
 		return 0;
 	}
 
+
+	if (g_debugPrint)
+		printf("Staring to parse...\n");
+
 	while (fgets(line, sizeof(line), f))
 	{
 		switch (state)
 		{
 			case STATE_STRUCT:
 			{
-				 if (!strcmp(line, "typedef struct ARFuncs"))
-				 {
+				if (strstr(line, "typedef struct ARFuncs"))
+				{
 					state = STATE_FIND_FUNCTIONS;
 
 					if (g_debugPrint)
 						printf("Switching to looking for functions\n");
-				 }
+				}
 
 				break;
 			}
@@ -320,7 +331,7 @@ static BGFunction* parseHeader(const char* filename)
 			{
 				BGFunction* func;
 
-				if (!strcmp(line, "} ARFuncs;"))
+				if (strstr(line, "} ARFuncs"))
 				{
 					if (g_debugPrint)
 						printf("End of function hunt\n");
@@ -351,6 +362,8 @@ static BGFunction* parseHeader(const char* filename)
 				break;
 			}
 		}
+
+		memset(line, 0, sizeof(line));
 	}
 
 end:;

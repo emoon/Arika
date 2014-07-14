@@ -15,7 +15,7 @@ typedef struct BGFunction
 	BGParameter* parameters;
 	char* name;
 	char* returnType;
-	int parmCount;
+	int parameterCount;
 	struct BGFunction* next;
 
 } BGFunction;
