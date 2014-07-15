@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <string.h>
+#include <ctype.h>
 
 static bool g_debugPrint = true;
 
@@ -21,11 +22,10 @@ static bool g_debugPrint = true;
 
 static bool isFunction(const char* line, int length)
 {
-	int i = 0;
 	int left_param = 0;
 	int right_param = 0;
 
-	for (i = 0; i < length; ++i)
+	for (int i = 0; i < length; ++i)
 	{
 		char c = line[i];
 
@@ -46,6 +46,48 @@ static bool isFunction(const char* line, int length)
 	}
 
 	return left_param == 2 && right_param == 2;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Note: This function returns a pointer to a substring of the original string.
+// If the given string was allocated dynamically, the caller must not overwrite
+// that pointer with the returned value, since the original pointer must be
+// deallocated using the same allocator with which it was allocated.  The return
+// value must NOT be deallocated using free() etc.
+
+static char* trimWhitespace(char *str)
+{
+	char* end;
+
+	// Trim leading space
+	while (isspace(*str)) 
+		str++;
+
+	if (*str == 0)  // All spaces?
+		return str;
+
+	// Trim trailing space
+	end = str + strlen(str) - 1;
+
+	while (end > str && isspace(*end)) 
+		end--;
+
+	// Write new null terminator
+	*(end + 1) = 0;
+
+	return str;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+static char* strcpyAndTrim(char* str, int len)
+{
+	char* newStr = malloc(len + 256);
+	memset(newStr, 0, len + 256);
+	memcpy(newStr, str, len + 1);
+	newStr[len] = 0;
+
+	return trimWhitespace(newStr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,24 +233,14 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 		{
 			if (token[i] == ' ')
 			{
-				parameter->variable = malloc(count + 1);
-				memcpy(parameter->variable, &token[i + 1], count);
-				parameter->variable[count] = 0;
+				parameter->variable = strcpyAndTrim(&token[i + 1], count);
 				break;
 			}
 
 			count++;
 		}
 
-		// get type
-
-		if (token[0] == ' ')
-			token++;
-
-		parameter->type = malloc(i + 256);
-		memset(parameter->type, 0, i + 256);
-		memcpy(parameter->type, token, i + 1);
-		parameter->type[i + 0] = 0;
+		parameter->type = strcpyAndTrim(token, i);
 
 		token = strtok(NULL, ",");
 
