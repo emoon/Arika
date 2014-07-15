@@ -337,22 +337,56 @@ static BGFunction* parseHeader(const char* filename)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+static int getExt(char* dest, const char* line)
+{
+	int i;
+	int len = strlen(line);
+
+	for (i = len; i > 0; --i)
+	{
+		if (line[i] == '.')
+			break;
+	}
+
+	if (i == 0)		// no . found
+		return 0;
+
+	strcpy(dest, &line[i]);
+
+	return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 int main(int argc, const char* argv[])
 {
+	char fileExt[64];
 	BGFunction* functions;
 
-	if (argc < 4)
+	if (argc < 3)
 	{
-		printf("usage: input.h <output type> <output file>\nExample: bind_generator foo.h --cs out.cs");
+		printf("usage: <input file> <output file>\nExample: bind_generator foo.h out.cs");
 		return 0;
 	}
 
 	functions = parseHeader(argv[1]);
 
-	if (!strcmp(argv[2], "-exp"))
+	if (!getExt(fileExt, argv[2]))
+	{
+		printf("Unable to find file extension for %s", argv[2]);
+		return -1;
+	}
+
+	// This is a bit hacky but like this because of extra params handling in tundra. Hopefully
+	// this can be fixed by sending is some proper commandline args instead
+
+	if (!strcmp(fileExt, ".c"))
 	{
 		if (!generate_exp(argv[3], functions))
 			return -1;
+	}
+	else if (!strcmp(fileExt, ".cs"))
+	{
 	}
 
 	return 0;
