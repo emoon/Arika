@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 static bool g_debugPrint = true;
+extern int generate_exp(const char* filename, const BGFunction* func);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A general notice of this code:
@@ -80,7 +81,7 @@ static char* trimWhitespace(char *str)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-static char* strcpyAndTrim(char* str, int len)
+static char* strcpyAndTrim(const char* str, int len)
 {
 	char* newStr = malloc(len + 256);
 	memset(newStr, 0, len + 256);
@@ -131,7 +132,6 @@ static int findParantRange(const char* line, int length, int* outStart, int* out
 
 static char* findReturn(const char* line, int lineLength)
 {
-	char* retType = 0;
 	int i, start = -1, end = -1;
 	int length = 0;
 
@@ -169,13 +169,7 @@ static char* findReturn(const char* line, int lineLength)
 
 	assert(length > 0);
 
-	retType = malloc(length);
-	memcpy(retType, &line[start], length);
-
-	// we stomp the last char here (which is a ' ') intentionally
-	retType[length] = 0;
-
-	return retType;
+	return strcpyAndTrim(&line[start], length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -345,13 +339,21 @@ static BGFunction* parseHeader(const char* filename)
 
 int main(int argc, const char* argv[])
 {
+	BGFunction* functions;
+
 	if (argc < 4)
 	{
 		printf("usage: input.h <output type> <output file>\nExample: bind_generator foo.h --cs out.cs");
 		return 0;
 	}
 
-	parseHeader(argv[1]);
+	functions = parseHeader(argv[1]);
+
+	if (!strcmp(argv[2], "-exp"))
+	{
+		if (!generate_exp(argv[3], functions))
+			return -1;
+	}
 
 	return 0;
 }
