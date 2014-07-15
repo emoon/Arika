@@ -49,9 +49,9 @@ StaticLibrary {
 		},
 	},
 
-	Sources = Glob {
-		Dir = "src/arika_internal",
-		Extensions = { ".c" },
+	Sources = {
+		"src/arika_internal/arika_internal.c",
+		BindGenerator { Source = "include/Arika/Arika.h", OutName = "arika_exports.c" },
 	},
 }
 

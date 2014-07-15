@@ -6,7 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-static bool g_debugPrint = true;
+static bool g_debugPrint = false;
 extern int generate_exp(const char* filename, const BGFunction* func);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,7 +363,7 @@ int main(int argc, const char* argv[])
 	char fileExt[64];
 	BGFunction* functions;
 
-	if (argc < 3)
+	if (argc != 3)
 	{
 		printf("usage: <input file> <output file>\nExample: bind_generator foo.h out.cs");
 		return 0;
@@ -382,7 +382,7 @@ int main(int argc, const char* argv[])
 
 	if (!strcmp(fileExt, ".c"))
 	{
-		if (!generate_exp(argv[3], functions))
+		if (!generate_exp(argv[2], functions))
 			return -1;
 	}
 	else if (!strcmp(fileExt, ".cs"))
