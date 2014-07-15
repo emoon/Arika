@@ -70,7 +70,7 @@ CSharpLib {
 	Name = "Arika.NET",
 	Sources = { 
 		"src/dotnet/Arika.cs",
-		"src/dotnet/ArikaRaw.cs" 
+		BindGenerator { Source = "include/Arika/Arika.h", OutName = "ArikaRaw.cs" },
 	},
 }
 

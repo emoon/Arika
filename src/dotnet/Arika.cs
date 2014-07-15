@@ -13,6 +13,13 @@ namespace Arika
 			IntPtr GetProcAddress(IntPtr dllHandle, string name);
 		}
 
+		public static T LoadFunction<T>(string name, DllLoadUtils utils, IntPtr handle) where T : class
+		{
+			IntPtr address = utils.GetProcAddress(handle, name);
+			System.Delegate fn_ptr = Marshal.GetDelegateForFunctionPointer(address, typeof(T));
+			return fn_ptr as T;
+		}
+
 		/*
 		internal delegate void MyCrossplatformBar(int a, int b);
 

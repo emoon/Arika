@@ -8,6 +8,7 @@
 
 static bool g_debugPrint = false;
 extern int generate_exp(const char* filename, const BGFunction* func);
+extern int generate_cs(const char* filename, const BGFunction* func);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A general notice of this code:
@@ -387,6 +388,7 @@ int main(int argc, const char* argv[])
 	}
 	else if (!strcmp(fileExt, ".cs"))
 	{
+		generate_cs(argv[2], functions);
 	}
 
 	return 0;
