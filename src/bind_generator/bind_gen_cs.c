@@ -53,12 +53,16 @@ static void writeType(FILE* f, const char* type)
 
 static void generateTypes(FILE* f, const BGFunction* func)
 {
+	fprintf(f, "\t\t[UnmanagedFunctionPointer(CallingConvention.Cdecl)]\n");
+	fprintf(f, "\t\tpublic delegate IntPtr InitType();\n\n");
+
 	while (func)
 	{
 		char csName[512];
 
 		int paramCount = func->parameterCount;
 
+		fprintf(f, "\t\t[UnmanagedFunctionPointer(CallingConvention.Cdecl)]\n");
 		fprintf(f, "\t\tpublic delegate ");
 		writeType(f, func->returnType);
 
@@ -78,27 +82,27 @@ static void generateTypes(FILE* f, const BGFunction* func)
 				fprintf(f, " %s,", param->variable);
 		}
 
-		fprintf(f, ");\n");
+		fprintf(f, ");\n\n");
 
 		func = func->next;
 	}
-
-	fprintf(f, "\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void generateDelegates(FILE* f, const BGFunction* func)
 {
+	fprintf(f, "\t\tpublic static InitType Init;\n");
+
 	while (func)
 	{
 		char csName[512];
 
-		fprintf(f, "\t\tpublic static Delegate");
+		fprintf(f, "\t\tpublic static ");
 
 		genCSName(csName, func->name);
 
-		fprintf(f, " %s;\n", csName);
+		fprintf(f, "%sType %s;\n", csName, csName);
 
 		func = func->next;
 	}
@@ -111,6 +115,7 @@ static void generateDelegates(FILE* f, const BGFunction* func)
 static void generateLoaderCode(FILE* f, const BGFunction* func)
 {
 	fprintf(f, "\t\tpublic static void ResolveSymbols(ArikaLoader.DllLoadUtils dllUtils, IntPtr dllHandle)\n\t\t{\n");
+	fprintf(f, "\t\t\tInit = ArikaLoader.LoadFunction<InitType>(\"ar_init_funcs\", dllUtils, dllHandle);\n");
 
 	while (func)
 	{
@@ -123,6 +128,7 @@ static void generateLoaderCode(FILE* f, const BGFunction* func)
 		func = func->next;
 	}
 
+	fprintf(f, "\t\t\tInit();\n");
 	fprintf(f, "\t\t}\n");
 }
 

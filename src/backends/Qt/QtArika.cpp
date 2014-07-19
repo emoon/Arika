@@ -242,8 +242,16 @@ static ARFuncs s_arFuncs =
 
 static void init()
 {
-	int argc = 0;
-	s_application = new QApplication(argc, (char**)0);
+	// must be static as QApplication constructor depends on it
+	static int argc = 1;
+	static const char* dummyStrings[] =
+	{
+		"dummy",
+		"dummy",
+		"dummy",
+	};
+
+	s_application = new QApplication(argc, (char**)&dummyStrings);
 
 	ar_internal_init(&s_arFuncs);
 }

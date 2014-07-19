@@ -60,7 +60,7 @@ static int traverseTable(struct ARWidget* widget, lua_State* state)
   			}
 			else if (!strcmp(key, "widget"))
 			{
-				struct ARWidget* cw = (struct ARWidget*)(unsigned __int64)value;
+				struct ARWidget* cw = (struct ARWidget*)(uint64_t)value;
 				g_arFuncs->widget_attach(widget, cw);
 			}
 			else if (!strcmp(key, "layout"))
@@ -182,6 +182,10 @@ static int ui_load(const char* filename)
 	return 1;
 }
 
+// hack in order to prevent code stripper to remove our code
+
+extern void* ar_window_create_main();
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int ar_internal_init(ARFuncs* funcs)
@@ -208,6 +212,11 @@ int ar_internal_init(ARFuncs* funcs)
 		lua_pushcfunction(state->luaState, s_funcs[i].func);
 		lua_setglobal(state->luaState, s_funcs[i].name);
 	}
+
+	// hack to reference funcs in exports
+
+	if (!g_arFuncs)
+		ar_window_create_main();
 
 	return 1;
 }

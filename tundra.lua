@@ -35,6 +35,10 @@ local macosx = {
 	Inherit = common,
 
 	Env = {
+		CSOPTS = {
+			"-g",
+		},
+
 		QT5 = native.getenv("QT5", ""),
 		CCOPTS = {
 			"-Wpedantic", "-Werror", "-Wall", "-Wno-deprecated-declarations", "-DOBJECT_DIR=\\\"$(OBJECTDIR)\\\"",

@@ -74,6 +74,7 @@ CSharpLib {
 	},
 }
 
+--SharedLibrary {
 SharedLibrary {
 	Name = "arika-qt",
 
@@ -81,41 +82,42 @@ SharedLibrary {
         CPPPATH = { 
             "include",
             "src",
-            "$(QT5)/include",
-            "$(QT5)/include/QtWidgets",
-            "$(QT5)/include/QtGui",
-            "$(QT5)/include/QtCore", 
-            "$(QT5)/lib/QtWidgets.framework/Headers", 
-            "$(QT5)/lib/QtCore.framework/Headers", 
-            "$(QT5)/lib/QtGui.framework/Headers", 
+            native.getenv("QT5", "") .. "/include",
+            native.getenv("QT5", "") .. "/include/QtWidgets",
+            native.getenv("QT5", "") .. "/include/QtCore",
+            native.getenv("QT5", "") .. "/include/QtGui",
+            native.getenv("QT5", "") .. "/lib/QtWidgets.framework/Headers",
+            native.getenv("QT5", "") .. "/lib/QtCore.framework/Headers",
+            native.getenv("QT5", "") .. "/lib/QtGui.framework/Headers",
         },
 
         LIBPATH = {
-            { "$(QT5)/lib"; Config = { "win32-*-*", "win64-*-*" } },
+            { native.getenv("QT5", "") .. "/lib"; Config = { "win32-*-*", "win64-*-*" } },
         },
 
         CXXOPTS = { { 
         	-- Mark Qt headers as system to silence all the warnings from them
-            "-isystem $(QT5)/lib/QtWidgets.framework/Headers", 
-            "-isystem $(QT5)/lib/QtCore.framework/Headers", 
-            "-isystem $(QT5)/lib/QtGui.framework/Headers", 
-            "-isystem $(QT5)/lib/QtWidgets.framework/Versions/5/Headers", 
-            "-isystem $(QT5)/lib/QtCore.framework/Versions/5/Headers", 
-            "-isystem $(QT5)/lib/QtGui.framework/Versions/5/Headers", 
-            "-F$(QT5)/lib",
-            "-std=gnu0x",
+       	    "-isystem " .. native.getenv("QT5", "") .. "/lib/QtWidgets.framework/Headers", 
+            "-isystem " .. native.getenv("QT5", "") .. "/lib/QtCore.framework/Headers", 
+            "-isystem " .. native.getenv("QT5", "") .. "/lib/QtGui.framework/Headers", 
+            "-isystem " .. native.getenv("QT5", "") .. "/lib/QtWidgets.framework/Versions/5/Headers", 
+            "-isystem " .. native.getenv("QT5", "") .. "/lib/QtCore.framework/Versions/5/Headers", 
+            "-isystem " .. native.getenv("QT5", "") .. "/lib/QtGui.framework/Versions/5/Headers", 
+            "-F" .. native.getenv("QT5", "") .. "/lib",
             "-Wno-nested-anon-types",
 			"-Wno-c99-extensions",
             "-Wno-c++98-compat-pedantic",
             "-Wno-padded",
             "-Wno-switch-enum",
             "-Wno-undefined-reinterpret-cast", -- Because of crap Qt code gen
-            "-Wno-documentation",	-- Because clang warnings in a bad manner even if the doc is correct
-            "-std=c++11" ; Config = "macosx-clang-*" },
+            "-Wno-documentation"	-- Because clang warnings in a bad manner even if the doc is correct
+            ; Config = "macosx-clang-*" },
         },
 
         SHLIBCOM = { 
-            { "-F$(QT5)/lib", "-lstdc++", "-rpath tundra-output$(SEP)macosx-clang-debug-default"; Config = "macosx-clang-*" },
+            { 
+            	"-F" .. native.getenv("QT5", "") .. "/lib",
+            	"-lstdc++", "-rpath tundra-output$(SEP)macosx-clang-debug-default"; Config = "macosx-clang-*" },
         },
 
     },
@@ -177,9 +179,9 @@ Program {
 	},
 }
 
--- if native.getenv("QT5", "") ~= "" then
--- 	Default "arika-qt"
--- end
+if native.getenv("QT5", "") ~= "" then
+ 	Default "arika-qt"
+end
 
 Default "bind_generator"
 Default "csharp"

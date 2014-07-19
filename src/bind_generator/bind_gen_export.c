@@ -51,7 +51,7 @@ int generate_exp(const char* filename, const BGFunction* func)
 				fprintf(f, "%s, ", param->variable);
 		}
 
-		fprintf(f, ");\n}\n\n", func->name);
+		fprintf(f, ");\n}\n\n");
 
 		func = func->next;
 	}

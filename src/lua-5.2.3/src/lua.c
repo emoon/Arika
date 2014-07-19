@@ -4,6 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
+#if 0
+
 
 #include <signal.h>
 #include <stdio.h>
@@ -146,6 +148,7 @@ static int report (lua_State *L, int status) {
 
 
 /* the next function is called unprotected, so it must avoid errors */
+/*
 static void finalreport (lua_State *L, int status) {
   if (status != LUA_OK) {
     const char *msg = (lua_type(L, -1) == LUA_TSTRING) ? lua_tostring(L, -1)
@@ -156,6 +159,7 @@ static void finalreport (lua_State *L, int status) {
   }
 }
 
+*/
 
 static int traceback (lua_State *L) {
   const char *msg = lua_tostring(L, 1);
@@ -476,8 +480,6 @@ static int pmain (lua_State *L) {
   return 1;
 }
 
-#if 0
-
 int main (int argc, char **argv) {
   int status, result;
   lua_State *L = luaL_newstate();  /* create state */
@@ -498,3 +500,4 @@ int main (int argc, char **argv) {
 
 #endif
 
+void dummy_lua() { }

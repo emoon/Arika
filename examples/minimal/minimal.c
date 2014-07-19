@@ -12,10 +12,10 @@ int main(int argc, char** argv)
 	if (!arFuncs)
 		return 0;
 
-	if (!arFuncs->ui_load("examples/minimal/minimal.ar"))
-		return 0;
+	//if (!arFuncs->ui_load("examples/minimal/minimal.ar"))
+	//	return 0;
 
-	//arFuncs->window_create_main();
+	arFuncs->window_create_main();
 
 	for (;;)
 	{
