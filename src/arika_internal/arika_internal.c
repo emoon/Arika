@@ -10,6 +10,10 @@
 ARFuncs* g_arFuncs = 0;
 static struct ARWidget* s_main_window;
 
+#ifdef _WIN32
+typedef unsigned __int64 uint64_t;
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 typedef struct LuaFuncs
