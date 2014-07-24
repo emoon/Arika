@@ -220,7 +220,7 @@ static void parseParameters(BGFunction* function, const char* line, int length)
 	while (token) 
 	{
 		int count = 0;
-		len = strlen(token);
+		len = (int)strlen(token);
 
 		// find name
 
@@ -287,7 +287,7 @@ static BGFunction* parseFunction(const char* line, int length)
 
 static BGFunction* parseLine(const char* line)
 {
-	int lineLength = strlen(line);
+	int lineLength = (int)strlen(line);
 
 	if (!isFunction(line, lineLength))
 		return 0;
@@ -341,7 +341,7 @@ static BGFunction* parseHeader(const char* filename)
 static int getExt(char* dest, const char* line)
 {
 	int i;
-	int len = strlen(line);
+	int len = (int)strlen(line);
 
 	for (i = len; i > 0; --i)
 	{

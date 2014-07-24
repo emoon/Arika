@@ -12,7 +12,7 @@ static const char* header = "using System;\nusing System.Runtime.InteropServices
 static void genCSName(char* out, const char* name)
 {
 	bool upperCaseNext = false;
-	int len = strlen(name);
+	int len = (int)strlen(name);
 
 	// Always upper case the first char
 

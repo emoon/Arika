@@ -25,7 +25,7 @@ StaticLibrary {
 
 	Env = {
 		CCOPTS = {
-			{ "/wd4244", "/wd4702"; Config = "win*-*-*" },	-- double -> int64 (as used in LUA for LUA_NUMBER)
+			{ "/wd4244", "/wd4324", "/wd4702"; Config = "win*-*-*" },	-- double -> int64 (as used in LUA for LUA_NUMBER)
 		},
 	},
 
@@ -126,6 +126,9 @@ SharedLibrary {
 		Dir = "src/backends/Qt",
 		Extensions = { ".cpp" },
 	},
+
+   Libs = { { "wsock32.lib", "kernel32.lib", "user32.lib", "gdi32.lib", "Comdlg32.lib", "Advapi32.lib",
+              "Qt5GUi.lib", "Qt5Core.lib", "Qt5Concurrent.lib", "Qt5Widgets.lib" ; Config = { "win32-*-*", "win64-*-*" } } },
 
 	Depends = { "lua", "arika_internal" },
 

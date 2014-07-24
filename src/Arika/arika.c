@@ -14,7 +14,7 @@ ARFuncs* ar_init(const char* path, const char* sharedLib)
 	void* (*initFunc)();
 	sprintf(fullPath, "%s/lib%s.dylib", path, sharedLib);
 #elif _WIN32
-	sprintf(fullPath, "%s/%.dll", path, sharedLib);
+	sprintf(fullPath, "%s/%s.dll", path, sharedLib);
 #else
 	sprintf(fullPath, "%s/%.so", path, sharedLib);
 #endif

@@ -60,15 +60,11 @@ Build {
 		Msvc = {
 		PlatformMappings = {
 			['win32-msvc'] = 'Win32',
-			['win32-msvc'] = 'Win64',
+		    ['win64-msvc'] = 'x64',
 		},
 		FullMappings = {
-			['win32-msvc-debug-default']         = { Config='Debug',              Platform='Win32' },
-			['win32-msvc-production-default']    = { Config='Production',         Platform='Win32' },
-			['win32-msvc-release-default']       = { Config='Release',            Platform='Win32' },
-			['win64-msvc-debug-default']         = { Config='Debug',              Platform='Win64' },
-			['win64-msvc-production-default']    = { Config='Production',         Platform='Win64' },
-			['win64-msvc-release-default']       = { Config='Release',            Platform='Win64' },
+	        ['release']    = 'Release',
+            ['debug']      = 'Debug'
 			},
 		},
 		MsvcSolutions = { ['Arika.sln'] = { } },
